@@ -1,0 +1,31 @@
+# Default values for the low-level graph engine
+<% if @nodestore_memory -%>
+neostore.nodestore.db.mapped_memory=<%= @nodestore_memory %>
+<% end -%>
+<% if @relationshipstore_memory -%>
+neostore.relationshipstore.db.mapped_memory=<%= @relationshipstore_memory %>
+<% end -%>
+<% if @propertystore_memory -%>
+neostore.propertystore.db.mapped_memory=<%= @propertystore_memory %>
+<% end -%>
+<% if @propertystore_strings_memory -%>
+neostore.propertystore.db.strings.mapped_memory=<%= @propertystore_strings_memory %>
+<% end -%>
+<% if @propertystore_arrays_memory -%>
+neostore.propertystore.db.arrays.mapped_memory=<%= @propertystore_arrays_memory %>
+<% end -%>
+
+<% if @version >= "2.1.0" -%>
+allow_store_upgrade=true
+<% end -%>
+
+#node_auto_indexing=true
+#node_keys_indexable=name,age
+
+#relationship_auto_indexing=true
+#relationship_keys_indexable=name,age
+
+# Keep logical logs, helps debugging but uses more disk space, enabled for
+# legacy reasons To limit space needed to store historical logs use values such
+# as: "7 days" or "100M size" instead of "true"
+keep_logical_logs=false

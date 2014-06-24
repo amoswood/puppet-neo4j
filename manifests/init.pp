@@ -9,58 +9,104 @@
 # Requires: see Modulefile
 #
 # Sample Usage:
-#
-class lw_neo4j {
+# Community: http://download.neo4j.org/artifact?edition=community&version=2.1.2&distribution=tarball
+class lw_neo4j (
+  $version = '2.1.2',
+  $edition = 'community',
+  $install_prefix = '/opt/neo4j',
 
-  group { 'neo4j': }
+  #server options
+  $allow_remote_connections = true, # allows remote connections
+  $jvm_init_memory = '512',  # enter size in MBs
+  $jvm_max_memory = '512',  # enter size in MBs
+
+  # low-level graph engine options
+  $nodestore_memory = undef,
+  $relationshipstore_memory = undef,
+  $propertystore_memory = undef,
+  $propertystore_strings_memory = undef,
+  $propertystore_arrays_memory = undef,
+)
+{
+  $package_name = "neo4j-${edition}-${version}"
+  $package_tarball = "${package_name}.tgz"
+
+  if($kernel != 'Linux') {
+    fail("Only Linux is supported at this time.")
+  }
+
 
   user { 'neo4j':
+    ensure => present,
     gid => 'neo4j',
+    shell => '/bin/bash',
+  }
+  group { 'neo4j':
+    ensure=>present,
   }
 
   File {
     owner=>'neo4j',
     group=>'neo4j',
-    mode=>'0755'
+    mode=>'0644'
   }
 
-  file { '/opt/neo4j':
+  Exec {
+    path => ['/usr/bin', '/usr/local/bin', '/bin', '/sbin'],
+  }
+
+  file { $install_prefix:
     ensure => directory,
   }
 
-  file { '/opt/neo4j/data':
+  file { "${install_prefix}/data":
     ensure => directory,
   }
 
-  file { '/opt/neo4j/neo4j-enterprise-2.0.3':
-    ensure => directory,
-    recurse => true,
-    source => 'puppet:///modules/lw_neo4j/neo4j-enterprise-2.0.3/',
+  # get the tgz file
+  exec { "wget ${package_tarball}" :
+    command => "wget \"http://download.neo4j.org/artifact?edition=${edition}&version=${version}&distribution=tarball\" -O ${install_prefix}/$package_tarball",
+    creates => "${install_prefix}/${package_tarball}",
+    notify  => Exec["untar ${package_tarball}"],
+    require => File[$install_prefix],
+  }
+
+  # untar the tarball at the desired location
+  exec { "untar ${package_tarball}":
+      command => "tar -xzf ${install_prefix}/${package_tarball} -C ${install_prefix}/; chown neo4j:neo4j -R ${install_prefix}",
+      refreshonly => true,
+      require => [Exec ["wget ${package_tarball}"], File[$install_prefix]],
   }
 
   #install the service
   file {'/etc/init.d/neo4j':
     ensure=>link,
-    target=>'/opt/neo4j/neo4j-enterprise-2.0.3/bin/neo4j',
-    require=>File['/opt/neo4j/neo4j-enterprise-2.0.3'],
+    target=>"${install_prefix}/${package_name}/bin/neo4j",
+    require => Exec["untar ${package_tarball}"],
   }
 
   # Track the configuration files
-  file { '/opt/neo4j/neo4j-enterprise-2.0.3/conf/neo4j.properties':
-    ensure  => present,
-    source  => 'puppet:///modules/lw_neo4j/conf/neo4j.properties',
+  file { 'neo4j.properties':
+    ensure  => file,
+    path    => "${install_prefix}/${package_name}/conf/neo4j.properties",
+    content  => template('lw_neo4j/neo4j.properties.erb'),
+    require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
   }
-  file { '/opt/neo4j/neo4j-enterprise-2.0.3/conf/neo4j-server.properties':
-    ensure  => present,
-    source  => 'puppet:///modules/lw_neo4j/conf/neo4j-server.properties',
+  file { 'neo4j-server.properties':
+    ensure  => file,
+    path    => "${install_prefix}/${package_name}/conf/neo4j-server.properties",
+    content  => template('lw_neo4j/neo4j-server.properties.erb'),
+    require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
   }
-  file { '/opt/neo4j/neo4j-enterprise-2.0.3/conf/neo4j-wrapper.conf':
-    ensure  => present,
-    source  => 'puppet:///modules/lw_neo4j/conf/neo4j-wrapper.conf',
+  file { 'neo4j-wrapper.conf':
+    ensure  => file,
+    path    => "${install_prefix}/${package_name}/conf/neo4j-wrapper.conf",
+    content  => template('lw_neo4j/neo4j-wrapper.conf.erb'),
+    require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
   }
