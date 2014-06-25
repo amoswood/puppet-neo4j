@@ -1,16 +1,4 @@
-# Class: lw_neo4j
-#
-# This module manages lw_neo4j
-#
-# Parameters: none
-#
-# Actions:
-#
-# Requires: see Modulefile
-#
-# Sample Usage:
-# Community: http://download.neo4j.org/artifact?edition=community&version=2.1.2&distribution=tarball
-class lw_neo4j (
+class neo4j (
   $version = '2.1.2',
   $edition = 'community',
   $install_prefix = '/opt/neo4j',
@@ -124,7 +112,7 @@ class lw_neo4j (
   file { 'neo4j.properties':
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j.properties",
-    content  => template('lw_neo4j/neo4j.properties.erb'),
+    content  => template('neo4j/neo4j.properties.erb'),
     mode => '0600',
     require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
@@ -133,7 +121,7 @@ class lw_neo4j (
   file { 'neo4j-server.properties':
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-server.properties",
-    content  => template('lw_neo4j/neo4j-server.properties.erb'),
+    content  => template('neo4j/neo4j-server.properties.erb'),
     mode => '0600',
     require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
@@ -142,7 +130,7 @@ class lw_neo4j (
   file { 'neo4j-wrapper.conf':
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-wrapper.conf",
-    content  => template('lw_neo4j/neo4j-wrapper.conf.erb'),
+    content  => template('neo4j/neo4j-wrapper.conf.erb'),
     mode => '0600',
     require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
@@ -172,7 +160,7 @@ class lw_neo4j (
     file { 'authentication-extension' :
       ensure => file,
       path => "${install_prefix}/${package_name}/plugins/${authentication_plugin_name}",
-      source => "puppet:///modules/lw_neo4j/${authentication_plugin_name}",
+      source => "puppet:///modules/neo4j/${authentication_plugin_name}",
       notify => Service['neo4j'],
       require => Exec["untar ${package_tarball}"],
     }
@@ -181,27 +169,27 @@ class lw_neo4j (
     file { 'createNeo4jUser.sh':
       ensure  => file,
       path    => "${install_prefix}/${package_name}/bin/createNeo4jUser",
-      source => 'puppet:///modules/lw_neo4j/createNeo4jUser.sh',
+      source => 'puppet:///modules/neo4j/createNeo4jUser.sh',
       mode => '0755',
       require => Exec["untar ${package_tarball}"],
     }
     file { 'updateNeo4jUser.sh':
       ensure  => file,
       path    => "${install_prefix}/${package_name}/bin/updateNeo4jUser",
-      source => 'puppet:///modules/lw_neo4j/updateNeo4jUser.sh',
+      source => 'puppet:///modules/neo4j/updateNeo4jUser.sh',
       mode => '0755',
       require => Exec["untar ${package_tarball}"],
     }
     file { 'removeNeo4jUser.sh':
       ensure  => file,
       path    => "${install_prefix}/${package_name}/bin/removeNeo4jUser",
-      source => 'puppet:///modules/lw_neo4j/removeNeo4jUser.sh',
+      source => 'puppet:///modules/neo4j/removeNeo4jUser.sh',
       mode => '0755',
       require => Exec["untar ${package_tarball}"],
     }
 
     if(is_hash($users)) {
-       create_resources(lw_neo4j::user, $users)
+       create_resources(neo4j::user, $users)
     }
   }
 
@@ -241,7 +229,7 @@ class lw_neo4j (
       file { 'newrelic.yml' :
         ensure => file,
         path => "${install_prefix}/newrelic/newrelic.yml",
-        content => template('lw_neo4j/newrelic-neo4j.yml.erb'),
+        content => template('neo4j/newrelic-neo4j.yml.erb'),
         notify => Service['neo4j'],
       }
     }
