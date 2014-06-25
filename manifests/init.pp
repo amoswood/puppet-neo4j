@@ -26,6 +26,12 @@ class lw_neo4j (
   $propertystore_memory = undef,
   $propertystore_strings_memory = undef,
   $propertystore_arrays_memory = undef,
+
+  #security
+  $use_auth = false,
+  $admin_user = undef,
+  $admin_password = undef,
+  $users = undef,
 )
 {
   $package_name = "neo4j-${edition}-${version}"
@@ -34,7 +40,9 @@ class lw_neo4j (
   if($kernel != 'Linux') {
     fail("Only Linux is supported at this time.")
   }
-
+  if($version < '2.0.0') {
+    fail("Only versions >= 2.0.0 are supported at this time.")
+  }
 
   user { 'neo4j':
     ensure => present,
@@ -90,6 +98,7 @@ class lw_neo4j (
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j.properties",
     content  => template('lw_neo4j/neo4j.properties.erb'),
+    mode => '0600',
     require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
@@ -98,6 +107,7 @@ class lw_neo4j (
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-server.properties",
     content  => template('lw_neo4j/neo4j-server.properties.erb'),
+    mode => '0600',
     require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
@@ -106,6 +116,7 @@ class lw_neo4j (
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-wrapper.conf",
     content  => template('lw_neo4j/neo4j-wrapper.conf.erb'),
+    mode => '0600',
     require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
@@ -115,5 +126,56 @@ class lw_neo4j (
     ensure=>running,
     enable=>true,
     require=>File['/etc/init.d/neo4j'],
+  }
+
+  if($use_auth) {
+    #determine the plugin version
+    if($version >= '2.1.0') {
+      $authentication_plugin_name = "authentication-extension-2.1.2-1.0-SNAPSHOT.jar"
+    } elsif($version >= '2.0.0') {
+      $authentication_plugin_name = "authentication-extension-2.0.3-1.0-SNAPSHOT.jar"
+    } else {
+      fail("Authenitcation in version ${version} is not supported. It is only available in version >= 2.0.0.")
+    }
+
+    if( ! $admin_user or ! $admin_password) {
+      fail('An admin user (admin_user) and password (admin_password) must be set when use_auth is true.')
+    }
+
+    file { 'authentication-extension' :
+      ensure => file,
+      path => "${install_prefix}/${package_name}/plugins/${authentication_plugin_name}",
+      source => "puppet:///modules/lw_neo4j/${authentication_plugin_name}",
+      notify => Service['neo4j'],
+      require => Exec["untar ${package_tarball}"],
+    }
+
+    # Track the user management files
+    file { 'createNeo4jUser.sh':
+      ensure  => file,
+      path    => "${install_prefix}/${package_name}/bin/createNeo4jUser",
+      source => 'puppet:///modules/lw_neo4j/createNeo4jUser.sh',
+      mode => '0755',
+      require => Exec["untar ${package_tarball}"],
+    }
+    file { 'updateNeo4jUser.sh':
+      ensure  => file,
+      path    => "${install_prefix}/${package_name}/bin/updateNeo4jUser",
+      source => 'puppet:///modules/lw_neo4j/updateNeo4jUser.sh',
+      mode => '0755',
+      require => Exec["untar ${package_tarball}"],
+    }
+    file { 'removeNeo4jUser.sh':
+      ensure  => file,
+      path    => "${install_prefix}/${package_name}/bin/removeNeo4jUser",
+      source => 'puppet:///modules/lw_neo4j/removeNeo4jUser.sh',
+      mode => '0755',
+      require => Exec["untar ${package_tarball}"],
+    }
+
+    if(is_hash($users)) {
+       create_resources(lw_neo4j::user, $users)
+    }
+
   }
 }
