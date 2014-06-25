@@ -29,3 +29,32 @@ allow_store_upgrade=true
 # legacy reasons To limit space needed to store historical logs use values such
 # as: "7 days" or "100M size" instead of "true"
 keep_logical_logs=true
+
+#HA settings
+<% if @ha_ensure == "present" -%>
+ha.server_id=<%= @ha_server_id %>
+ha.initial_hosts=<%= @ha_initial_hosts %>
+ha.cluster_server=<%= @ipaddress %>:<%= @ha_cluster_port %>
+ha.server=<%= @ipaddress %>:<%= @ha_data_port %>
+
+<% if @ha_allow_init_cluster -%>
+ha.allow_init_cluster=<%= @ha_allow_init_cluster %>
+<% end -%>
+
+<% if @ha_slave_only -%>
+ha.slave_only=<%= @ha_slave_only %>
+<% end -%>
+
+<% if @ha_pull_interval -%>
+ha.pull_interval=<%= @ha_pull_interval %>
+<% end -%>
+
+<% if @ha_tx_push_factor -%>
+ha.tx_push_factor=<%= @ha_tx_push_factor %>
+<% end -%>
+
+<% if @ha_tx_push_strategy -%>
+ha.tx_push_strategy=<%= @ha_tx_push_strategy %>
+<% end -%>
+
+<% end -%>

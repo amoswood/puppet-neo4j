@@ -39,6 +39,19 @@ class lw_neo4j (
   $newrelic_agent_version = '3.7.2',
   $newrelic_app_name = $::hostname,
   $newrelic_yml_contents = undef,
+
+  #high availability settings
+  #refers to: http://docs.neo4j.org/chunked/stable/ha-configuration.html
+  $ha_ensure = absent,
+  $ha_server_id = undef,
+  $ha_cluster_port = '5001',
+  $ha_data_port = '6001',
+  $ha_initial_hosts = undef,
+  $ha_pull_interval = undef,
+  $ha_tx_push_factor = undef,
+  $ha_tx_push_strategy = undef,
+  $ha_allow_init_cluster = true,
+  $ha_slave_only = false,
 )
 {
   $package_name = "neo4j-${edition}-${version}"
@@ -49,6 +62,13 @@ class lw_neo4j (
   }
   if($version < '2.0.0') {
     fail("Only versions >= 2.0.0 are supported at this time.")
+  }
+  if($ha_ensure and $ha_ensure == present) {
+    validate_re($ha_server_id, '[0-9]+', 'The Server Id value must be specified and must numeric.')
+
+    if(! $ha_initial_hosts) {
+      fail("You must specify the initial hosts to connect to for HA.")
+    }
   }
 
   user { 'neo4j':
@@ -226,5 +246,4 @@ class lw_neo4j (
       }
     }
   }
-
 }
