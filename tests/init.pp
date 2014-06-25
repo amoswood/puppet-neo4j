@@ -1,22 +1,22 @@
 $users = {
-  puppetUser1 => {
-    ensure     => absent,
-    password   => 'puppet',
-    readWrite  => true,
-  },
-  puppetUser2 => {
+  user1 => {
     ensure     => present,
     password   => 'puppet',
     readWrite  => true,
   },
-  puppetUser10 => {
+  user2 => {
+    ensure     => present,
+    password   => 'puppet',
+    readWrite  => true,
+  },
+  user10 => {
     ensure     => present,
     password   => 'puppet',
     readWrite  => false,
   },
 }
 
-class { 'lw_neo4j' :
+class { 'neo4j' :
   version => '2.1.2',
   edition => 'enterprise',
   install_prefix => '/opt/neo4j',
@@ -24,8 +24,8 @@ class { 'lw_neo4j' :
   jvm_max_memory => '1024',
   allow_remote_connections => true,
   use_auth => true,
-  admin_user => 'puppetAdmin',
-  admin_password => 'puppet',
+  admin_user => 'admin',
+  admin_password => 'password',
   users => $users,
   newrelic_ensure => absent,
 }

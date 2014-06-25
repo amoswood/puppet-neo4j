@@ -1,13 +1,13 @@
-define lw_neo4j::user(
+define neo4j::user(
   $ensure = present,
   $password,
   $readWrite = true,
 ){
   $user = $title
-  $install_prefix = $lw_neo4j::install_prefix
-  $package_name = $lw_neo4j::package_name
-  $admin_user = $lw_neo4j::admin_user
-  $admin_password = $lw_neo4j::admin_password
+  $install_prefix = $neo4j::install_prefix
+  $package_name = $neo4j::package_name
+  $admin_user = $neo4j::admin_user
+  $admin_password = $neo4j::admin_password
 
   $auth_endpoint = "http://${::ipaddress}:7474/auth"
 
