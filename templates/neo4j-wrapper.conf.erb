@@ -37,3 +37,11 @@ wrapper.pidfile=<%= @install_prefix -%>/data/neo4j-server.pid
 # Name of the service
 wrapper.name=neo4j
 wrapper.user=neo4j
+
+#********************************************************************
+# New Relic Java Agent
+#********************************************************************
+
+<% if @newrelic_ensure and @newrelic_ensure == "present" -%>
+wrapper.java.additional=-javaagent:<%= @install_prefix -%>/newrelic/newrelic-agent-<%= @newrelic_agent_version -%>.jar
+<% end -%>

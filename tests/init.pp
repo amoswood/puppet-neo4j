@@ -27,4 +27,5 @@ class { 'lw_neo4j' :
   admin_user => 'puppetAdmin',
   admin_password => 'puppet',
   users => $users,
+  newrelic_ensure => absent,
 }

@@ -32,6 +32,13 @@ class lw_neo4j (
   $admin_user = undef,
   $admin_password = undef,
   $users = undef,
+
+  #newrelic
+  $newrelic_ensure = absent,
+  $newrelic_license_key = undef,
+  $newrelic_agent_version = '3.7.2',
+  $newrelic_app_name = $::hostname,
+  $newrelic_yml_contents = undef,
 )
 {
   $package_name = "neo4j-${edition}-${version}"
@@ -176,6 +183,48 @@ class lw_neo4j (
     if(is_hash($users)) {
        create_resources(lw_neo4j::user, $users)
     }
-
   }
+
+  $newrelic_dir_ensure = $newrelic_ensure ? {
+    present => directory,
+    default => absent,
+  }
+
+  file { "${install_prefix}/newrelic" :
+    ensure => $newrelic_dir_ensure,
+    force => true,
+    notify => Service['neo4j'],
+  }
+
+  if($newrelic_ensure and $newrelic_ensure != absent and $newrelic_ensure != purged) {
+
+    validate_re($newrelic_license_key, '[0-9a-fA-F]{40}', 'New Relic license key is not a 40 character hexadecimal string')
+
+    # get the newrelic agent file
+    #http://download.newrelic.com/newrelic/java-agent/newrelic-agent/3.7.2/
+    exec { 'wget newrelic-agent.jar' :
+      path => ['/usr/bin', '/usr/sbin', '/bin', '/sbin'],
+      command => "wget \"http://download.newrelic.com/newrelic/java-agent/newrelic-agent/${newrelic_agent_version}/newrelic-agent-${newrelic_agent_version}.jar\" -O ${install_prefix}/newrelic/newrelic-agent-${newrelic_agent_version}.jar",
+      creates => "${install_prefix}/newrelic/newrelic-agent-${newrelic_agent_version}.jar",
+      notify  => Service['neo4j'],
+      require => File["${install_prefix}/newrelic"],
+    }
+
+    if($newrelic_yml_content) {
+      file { 'newrelic.yml' :
+        ensure => file,
+        path => "${install_prefix}/newrelic/newrelic.yml",
+        content => $newrelic_yml_content,
+        notify => Service['neo4j'],
+      }
+    } else {
+      file { 'newrelic.yml' :
+        ensure => file,
+        path => "${install_prefix}/newrelic/newrelic.yml",
+        content => template('lw_neo4j/newrelic-neo4j.yml.erb'),
+        notify => Service['neo4j'],
+      }
+    }
+  }
+
 }
