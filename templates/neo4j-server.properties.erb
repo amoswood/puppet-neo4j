@@ -85,7 +85,7 @@ org.neo4j.server.http.log.config=conf/neo4j-http-logging.xml
 #*****************************************************************
 # AUTH section
 #*****************************************************************
-<% if @use_auth -%>
-org.neo4j.server.credentials=<%= @admin_user %>:<%= @admin_password %>
+<% if @auth_ensure -%>
+org.neo4j.server.credentials=<%= @auth_admin_user %>:<%= @auth_admin_password %>
 org.neo4j.server.thirdparty_jaxrs_classes=org.neo4j.server.extension.auth=/auth
 <% end -%>

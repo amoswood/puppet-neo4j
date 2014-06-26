@@ -1,18 +1,15 @@
-$users = {
+$auth_users = {
   user1 => {
     ensure     => present,
     password   => 'puppet',
-    readWrite  => true,
   },
   user2 => {
-    ensure     => present,
-    password   => 'puppet',
-    readWrite  => true,
-  },
-  user10 => {
-    ensure     => present,
     password   => 'puppet',
     readWrite  => false,
+  },
+  user3 => {
+    ensure     => absent,
+    password   => '',
   },
 }
 
@@ -23,9 +20,9 @@ class { 'neo4j' :
   jvm_init_memory => '1024',
   jvm_max_memory => '1024',
   allow_remote_connections => true,
-  use_auth => true,
-  admin_user => 'admin',
-  admin_password => 'password',
-  users => $users,
+  auth_ensure => present,
+  auth_admin_user => 'admin',
+  auth_admin_password => 'password',
+  auth_users => $auth_users,
   newrelic_ensure => absent,
 }
