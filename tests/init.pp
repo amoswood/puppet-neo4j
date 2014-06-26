@@ -22,7 +22,7 @@ class { 'neo4j' :
   allow_remote_connections => true,
   auth_ensure => present,
   auth_admin_user => 'admin',
-  auth_admin_password => 'password',
+  auth_admin_password => 'password'
   auth_users => $auth_users
   newrelic_ensure => absent,
 }
