@@ -32,3 +32,4 @@ else
     createNeo4jUser $AUTH_ENDPOINT $LOGIN $USER $PASSWORD $READWRITE
   fi
 fi
+exit 0
