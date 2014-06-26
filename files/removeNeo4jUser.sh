@@ -14,3 +14,5 @@ for f in `curl -XGET --silent --user $LOGIN $AUTH_ENDPOINT/list | grep -oE "$USE
 do
   curl -XPOST --silent --user $LOGIN -d "user=$f" $AUTH_ENDPOINT/remove-user
 done
+
+exit 0

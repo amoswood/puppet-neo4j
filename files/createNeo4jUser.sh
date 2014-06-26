@@ -23,3 +23,4 @@ then
     curl -XPOST --silent --user $LOGIN -d "user=$USER:$PASSWORD" $AUTH_ENDPOINT/add-user-ro
   fi
 fi
+exit 0
