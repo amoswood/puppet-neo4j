@@ -4,9 +4,9 @@ class neo4j (
   $install_prefix = '/opt/neo4j',
 
   #server options
-  $allow_remote_connections = true, # allows remote connections
-  $jvm_init_memory = '512',  # enter size in MBs
-  $jvm_max_memory = '512',  # enter size in MBs
+  $allow_remote_connections = true,
+  $jvm_init_memory = '1024',
+  $jvm_max_memory = '1024',
 
   # low-level graph engine options
   $nodestore_memory = undef,
@@ -16,10 +16,10 @@ class neo4j (
   $propertystore_arrays_memory = undef,
 
   #security
-  $use_auth = false,
-  $admin_user = undef,
-  $admin_password = undef,
-  $users = undef,
+  $auth_ensure = absent,
+  $auth_admin_user = undef,
+  $auth_admin_password = undef,
+  $auth_users = undef,
 
   #newrelic
   $newrelic_ensure = absent,
@@ -29,7 +29,6 @@ class neo4j (
   $newrelic_yml_contents = undef,
 
   #high availability settings
-  #refers to: http://docs.neo4j.org/chunked/stable/ha-configuration.html
   $ha_ensure = absent,
   $ha_server_id = undef,
   $ha_cluster_port = '5001',
@@ -86,19 +85,22 @@ class neo4j (
     ensure => directory,
   }
 
+  package { 'wget' : }
+  package { 'tar' : }
+
   # get the tgz file
   exec { "wget ${package_tarball}" :
     command => "wget \"http://download.neo4j.org/artifact?edition=${edition}&version=${version}&distribution=tarball\" -O ${install_prefix}/$package_tarball",
     creates => "${install_prefix}/${package_tarball}",
     notify  => Exec["untar ${package_tarball}"],
-    require => File[$install_prefix],
+    require => [Package['wget'], File[$install_prefix]],
   }
 
   # untar the tarball at the desired location
   exec { "untar ${package_tarball}":
       command => "tar -xzf ${install_prefix}/${package_tarball} -C ${install_prefix}/; chown neo4j:neo4j -R ${install_prefix}",
       refreshonly => true,
-      require => [Exec ["wget ${package_tarball}"], File[$install_prefix]],
+      require => [Exec ["wget ${package_tarball}"], File[$install_prefix], Package['tar']],
   }
 
   #install the service
@@ -143,7 +145,7 @@ class neo4j (
     require=>File['/etc/init.d/neo4j'],
   }
 
-  if($use_auth) {
+  if($auth_ensure) {
     #determine the plugin version
     if($version >= '2.1.0') {
       $authentication_plugin_name = "authentication-extension-2.1.2-1.0-SNAPSHOT.jar"
@@ -153,8 +155,8 @@ class neo4j (
       fail("Authenitcation in version ${version} is not supported. It is only available in version >= 2.0.0.")
     }
 
-    if( ! $admin_user or ! $admin_password) {
-      fail('An admin user (admin_user) and password (admin_password) must be set when use_auth is true.')
+    if( ! $auth_admin_user or ! $auth_admin_password) {
+      fail('An admin user (auth_admin_user) and password (auth_admin_password) must be set when auth_ensure is true.')
     }
 
     file { 'authentication-extension' :
@@ -188,8 +190,8 @@ class neo4j (
       require => Exec["untar ${package_tarball}"],
     }
 
-    if(is_hash($users)) {
-       create_resources(neo4j::user, $users)
+    if(is_hash($auth_users)) {
+       create_resources(neo4j::user, $auth_users)
     }
   }
 
@@ -215,7 +217,7 @@ class neo4j (
       command => "wget \"http://download.newrelic.com/newrelic/java-agent/newrelic-agent/${newrelic_agent_version}/newrelic-agent-${newrelic_agent_version}.jar\" -O ${install_prefix}/newrelic/newrelic-agent-${newrelic_agent_version}.jar",
       creates => "${install_prefix}/newrelic/newrelic-agent-${newrelic_agent_version}.jar",
       notify  => Service['neo4j'],
-      require => File["${install_prefix}/newrelic"],
+      require => [File["${install_prefix}/newrelic"], Package['wget']],
     }
 
     if($newrelic_yml_content) {
