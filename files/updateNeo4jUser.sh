@@ -12,6 +12,12 @@ then
   exit 1
 fi
 
+#Test if the service is active yet
+curl -XGET --silent --user $LOGIN $AUTH_ENDPOINT/list
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
 USERCOUNT=`curl -XGET --silent --user $LOGIN $AUTH_ENDPOINT/list | grep -oE $USER: | wc -l`
 READWRITESTRING="RO"
 
