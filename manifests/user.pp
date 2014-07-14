@@ -62,22 +62,28 @@ define neo4j::user(
   if($ensure != absent and $ensure != purged) {
     #Create the users if they don't exist
     exec { "Create Neo4j User ${user}" :
-      command => "createNeo4jUser ${auth_endpoint} \"${auth_admin_user}:${auth_admin_password}\" ${user} \"${password}\" ${readWriteValue}",
-      onlyif  => "test `${count_command}` -eq 0",
-      require => [File['createNeo4jUser.sh', 'authentication-extension'], Service['neo4j']],
+      command   => "createNeo4jUser ${auth_endpoint} \"${auth_admin_user}:${auth_admin_password}\" ${user} \"${password}\" ${readWriteValue}",
+      onlyif    => "test `${count_command}` -eq 0",
+      require   => [File['createNeo4jUser.sh', 'authentication-extension'], Service['neo4j']],
+      tries     => 12,
+      try_sleep => 5
     }
     exec { "Update Neo4j User ${user}" :
-      command => "updateNeo4jUser ${auth_endpoint} \"${auth_admin_user}:${auth_admin_password}\" ${user} \"${password}\" ${readWriteValue}",
-      onlyif  => "test \"`${user_command}`\" != \"${user}:${password}\\\":\\\"${readWriteString}\\\"\"",
-      require => [Exec["Create Neo4j User ${user}"], File['updateNeo4jUser.sh', 'authentication-extension'], Service['neo4j']],
+      command   => "updateNeo4jUser ${auth_endpoint} \"${auth_admin_user}:${auth_admin_password}\" ${user} \"${password}\" ${readWriteValue}",
+      onlyif    => "test \"`${user_command}`\" != \"${user}:${password}\\\":\\\"${readWriteString}\\\"\"",
+      require   => [Exec["Create Neo4j User ${user}"], File['updateNeo4jUser.sh', 'authentication-extension'], Service['neo4j']],
+      tries     => 12,
+      try_sleep => 5
     }
   }
   # remove the user
   else {
     exec { "Remove Neo4j User ${user}" :
-      command => "removeNeo4jUser ${auth_endpoint} \"${auth_admin_user}:${auth_admin_password}\" ${user}",
-      onlyif  => "test `${count_command}` -gt 0",
-      require => [File['removeNeo4jUser.sh', 'authentication-extension'], Service['neo4j']],
+      command   => "removeNeo4jUser ${auth_endpoint} \"${auth_admin_user}:${auth_admin_password}\" ${user}",
+      onlyif    => "test `${count_command}` -gt 0",
+      require   => [File['removeNeo4jUser.sh', 'authentication-extension'], Service['neo4j']],
+      tries     => 12,
+      try_sleep => 5
     }
   }
 }
