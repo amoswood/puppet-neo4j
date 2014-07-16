@@ -111,8 +111,12 @@ class neo4j (
     ensure => directory,
   }
 
-  package { 'wget' : }
-  package { 'tar' : }
+  if ! defined(Package['wget']) {
+    package { 'wget' : }
+  }
+  if ! defined(Package['tar']) {
+    package { 'tar' : }
+  }
 
   # get the tgz file
   exec { "wget ${package_tarball}" :
