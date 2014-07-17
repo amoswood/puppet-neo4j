@@ -88,6 +88,7 @@ class neo4j (
     ensure => present,
     gid    => 'neo4j',
     shell  => '/bin/bash',
+    home   => $install_prefix,
   }
   group { 'neo4j':
     ensure=>present,
