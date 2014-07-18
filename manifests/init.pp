@@ -48,11 +48,7 @@ class neo4j (
   $auth_users = undef,
 
   #newrelic
-  $newrelic_ensure = absent,
-  $newrelic_license_key = undef,
-  $newrelic_agent_version = '3.7.2',
-  $newrelic_app_name = $::hostname,
-  $newrelic_yml_contents = undef,
+  $newrelic_jar_path = undef,
 
   #high availability settings
   $ha_ensure = absent,
@@ -226,7 +222,7 @@ class neo4j (
     }
   }
 
-  $newrelic_dir_ensure = $newrelic_ensure ? {
+  $newrelic_dir_ensure = $::neo4j::newrelic_ensure ? {
     present => directory,
     default => absent,
   }
@@ -235,39 +231,5 @@ class neo4j (
     ensure => $newrelic_dir_ensure,
     force  => true,
     notify => Service['neo4j'],
-  }
-
-  if($newrelic_ensure and $newrelic_ensure != absent and $newrelic_ensure != purged) {
-
-    validate_re($newrelic_license_key, '[0-9a-fA-F]{40}', 'New Relic license key is not a 40 character hexadecimal string')
-
-    $url = "http://download.newrelic.com/newrelic/java-agent/newrelic-agent/${newrelic_agent_version}/newrelic-agent-${newrelic_agent_version}.jar"
-    $newrelic_jar = "${install_prefix}/newrelic/newrelic-agent-${newrelic_agent_version}.jar"
-
-    # get the newrelic agent file
-    #http://download.newrelic.com/newrelic/java-agent/newrelic-agent/3.7.2/
-    exec { 'wget newrelic-agent.jar' :
-      path    => ['/usr/bin', '/usr/sbin', '/bin', '/sbin'],
-      command => "wget \"${url}\" -O ${newrelic_jar}",
-      creates => $newrelic_jar,
-      notify  => Service['neo4j'],
-      require => [File["${install_prefix}/newrelic"], Package['wget']],
-    }
-
-    if($::neo4j::newrelic_yml_content) {
-      file { 'newrelic.yml' :
-        ensure  => file,
-        path    => "${install_prefix}/newrelic/newrelic.yml",
-        content => $::neo4j::newrelic_yml_content,
-        notify  => Service['neo4j'],
-      }
-    } else {
-      file { 'newrelic.yml' :
-        ensure  => file,
-        path    => "${install_prefix}/newrelic/newrelic.yml",
-        content => template('neo4j/newrelic-neo4j.yml.erb'),
-        notify  => Service['neo4j'],
-      }
-    }
   }
 }
