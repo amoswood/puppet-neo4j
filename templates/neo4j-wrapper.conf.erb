@@ -42,6 +42,6 @@ wrapper.user=neo4j
 # New Relic Java Agent
 #********************************************************************
 
-<% if @newrelic_ensure and @newrelic_ensure == "present" -%>
-wrapper.java.additional=-javaagent:<%= @install_prefix -%>/newrelic/newrelic-agent-<%= @newrelic_agent_version -%>.jar
+<% if @newrelic_jar_path -%>
+wrapper.java.additional=-javaagent:<%= @newrelic_jar_path -%>
 <% end -%>

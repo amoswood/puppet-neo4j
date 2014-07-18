@@ -19,7 +19,7 @@ Added custom configuration of:
 1. Community or Enterprise editions
 1. JVM Wrapper Settings
 1. Low-Level Graph Engine Memory Settings (see Max DeMarzi's blog [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/))
-1. New Relic java agent installed and configured (see http://www.newrelic.com)
+1. New Relic java agent path specified (see http://www.newrelic.com)
 1. Authentication Plugin installed and configured (see http://www.github.com)
 1. Authenticated User Management
   - Admin User
@@ -118,12 +118,10 @@ class { 'neo4j' :
 }
 ```
 ### New Relic Monitoring
-You can also specify to monitor the cluster with New Relic. Sign-up and monitoring is free from http://www.newrelic.com.
+You can also specify to monitor the server with New Relic. Sign-up and monitoring is free from http://www.newrelic.com.
 ```puppet
 class { 'neo4j' :
-  newrelic_ensure        => present,
-  newrelic_license_key   => '1234567890123456789012345678901234567890',
-  newrelic_agent_version => '3.7.0', #optional
+  newrelic_jar_path => '/path/to/newrelic.jar',
 }
 ```
 ##Reference
@@ -187,15 +185,7 @@ Manages the server.
   ```
 
 ######New Relic Parameters
-- `newrelic_ensure` -- Turns on/off new relic monitoring. Possibles: *present*, *absent*.
-**Default:** *absent*
-- `newrelic_license_key` -- New Relic license key.
-**Default:** *undef*
-- `newrelic_agent_version` -- New Relic java agent version. Must specify a specific version due to their download site.
-**Default:** *3.7.2*
-- `newrelic_app_name` -- App name for New Relic account.
-**Default:** *hostname of server*
-- `newrelic_yml_contents` -- Manually input full contents of new relic configuration yml file to custom control features.
+- `newrelic_jar_path` -- Specifies the full path to the newrelic java agent jar file.
 **Default:** *undef*
 
 ######HA Parameters
