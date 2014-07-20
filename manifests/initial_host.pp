@@ -23,7 +23,7 @@ define neo4j::initial_host (
 
   concat::fragment{ "${title} fragment ":
     target  => $fragment_file,
-    content => ",${ip}:${ha_cluster_port}",
+    content => "${ip}:${ha_cluster_port},",
     order   => 10,
   }
 }
