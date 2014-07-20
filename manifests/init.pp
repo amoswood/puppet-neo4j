@@ -169,7 +169,7 @@ class neo4j (
 
   concat::fragment{ 'neo4j properties footer':
     target  => $properties_file,
-    content => '\n\n#End of file\n',
+    content => "\n\n#End of file\n",
     order   => 99,
   }
 
