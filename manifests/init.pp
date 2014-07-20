@@ -55,7 +55,6 @@ class neo4j (
   $ha_server_id = undef,
   $ha_cluster_port = '5001',
   $ha_data_port = '6001',
-  $ha_initial_hosts = undef,
   $ha_pull_interval = undef,
   $ha_tx_push_factor = undef,
   $ha_tx_push_strategy = undef,
@@ -72,11 +71,9 @@ class neo4j (
   if($version < '2.0.0') {
     fail('Only versions >= 2.0.0 are supported at this time.')
   }
-  if($ha_ensure and $ha_ensure == present) {
-    validate_re($ha_server_id, '[0-9]+', 'The Server Id value must be specified and must numeric.')
-
-    if(! $ha_initial_hosts) {
-      fail('You must specify the initial hosts to connect to for HA.')
+  if($ha_ensure != absent) {
+    if(! is_numeric($ha_server_id)) {
+      fail('The Server Id value must be specified and must numeric.')
     }
   }
 
@@ -91,9 +88,9 @@ class neo4j (
   }
 
   File {
-    owner=>'neo4j',
-    group=>'neo4j',
-    mode=>'0644'
+    owner => 'neo4j',
+    group => 'neo4j',
+    mode  => '0644',
   }
 
   Exec {
@@ -138,15 +135,6 @@ class neo4j (
   }
 
   # Track the configuration files
-  file { 'neo4j.properties':
-    ensure  => file,
-    path    => "${install_prefix}/${package_name}/conf/neo4j.properties",
-    content => template('neo4j/neo4j.properties.erb'),
-    mode    => '0600',
-    require => Exec["untar ${package_tarball}"],
-    before  => Service['neo4j'],
-    notify  => Service['neo4j'],
-  }
   file { 'neo4j-server.properties':
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-server.properties",
@@ -156,6 +144,23 @@ class neo4j (
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
   }
+
+  $properties_file = "${install_prefix}/${package_name}/conf/neo4j.properties"
+
+  concat{ $properties_file :
+    owner   => 'neo4j',
+    group   => 'neo4j',
+    mode    => '0644',
+    before  => Service['neo4j'],
+    notify  => Service['neo4j'],
+  }
+
+  concat::fragment{ 'neo4j properties header':
+    target  => $properties_file,
+    content => template('neo4j/neo4j.properties.concat.1.erb'),
+    order   => 01,
+  }
+
   file { 'neo4j-wrapper.conf':
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-wrapper.conf",
