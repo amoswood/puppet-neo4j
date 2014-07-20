@@ -21,8 +21,6 @@ define neo4j::initial_host (
 ) {
   $fragment_file = $::neo4j::properties_file
 
-  tag "neo4j_cluster_${ha_cluster_name}"
-
   concat::fragment{ "${title} fragment ":
     target  => $fragment_file,
     content => ",${ip}:${ha_cluster_port}",
