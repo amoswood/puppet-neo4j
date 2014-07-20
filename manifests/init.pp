@@ -161,6 +161,12 @@ class neo4j (
     order   => 01,
   }
 
+  concat::fragment{ 'neo4j properties ha_initial_hosts':
+    target  => $properties_file,
+    content => "ha.initial_hosts=${::ipaddress}:${ha_cluster_port}",
+    order   => 02,
+  }
+
   file { 'neo4j-wrapper.conf':
     ensure  => file,
     path    => "${install_prefix}/${package_name}/conf/neo4j-wrapper.conf",
