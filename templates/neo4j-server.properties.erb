@@ -54,7 +54,7 @@ org.neo4j.server.manage.console_engines=shell
 # SINGLE - Single mode, default.
 # To run in High Availability mode, configure the
 # neo4j.properties config file, then uncomment this line:
-<% if @ha_ensure == "present" -%>
+<% if @ha_ensure != "absent" -%>
 org.neo4j.server.database.mode=HA
 <% end -%>
 #ha_ensure: <%= @ha_ensure %>
