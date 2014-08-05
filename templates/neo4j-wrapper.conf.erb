@@ -1,3 +1,7 @@
+#********************************************************************
+# Managed by puppet - Any changes will be overwritten
+#********************************************************************
+
 wrapper.java.additional=-Dorg.neo4j.server.properties=conf/neo4j-server.properties
 wrapper.java.additional=-Djava.util.logging.config.file=conf/logging.properties
 wrapper.java.additional=-Dlog4j.configuration=file:conf/log4j.properties
@@ -8,6 +12,9 @@ wrapper.java.additional=-Dlog4j.configuration=file:conf/log4j.properties
 
 wrapper.java.additional=-XX:+UseConcMarkSweepGC
 wrapper.java.additional=-XX:+CMSClassUnloadingEnabled
+<% if @newrelic_jar_path -%>
+wrapper.java.additional=-javaagent:<%= @newrelic_jar_path %>
+<% end -%>
 
 # Java Heap Size: by default the Java heap size is dynamically
 # calculated based on available system resources.
@@ -37,11 +44,3 @@ wrapper.pidfile=<%= @install_prefix -%>/data/neo4j-server.pid
 # Name of the service
 wrapper.name=neo4j
 wrapper.user=neo4j
-
-#********************************************************************
-# New Relic Java Agent
-#********************************************************************
-
-<% if @newrelic_jar_path -%>
-wrapper.java.additional=-javaagent:<%= @newrelic_jar_path %>
-<% end -%>
