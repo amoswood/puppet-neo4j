@@ -43,5 +43,5 @@ wrapper.user=neo4j
 #********************************************************************
 
 <% if @newrelic_jar_path -%>
-wrapper.java.additional=-javaagent:<%= @newrelic_jar_path -%>
+wrapper.java.additional=-javaagent:<%= @newrelic_jar_path %>
 <% end -%>
