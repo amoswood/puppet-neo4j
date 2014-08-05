@@ -193,7 +193,7 @@ class neo4j (
     require => File['/etc/init.d/neo4j'],
   }
 
-  if($auth_ensure) {
+  if($auth_ensure != absent) {
     #determine the plugin version
     if($version >= '2.1.0') {
       $authentication_plugin_name = 'authentication-extension-2.1.2-1.0-SNAPSHOT.jar'
