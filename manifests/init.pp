@@ -29,6 +29,10 @@ class neo4j (
   $edition = 'community',
   $install_prefix = '/opt/neo4j',
 
+  #service options
+  $service_ensure = running,
+  $service_enable = true,
+
   #server options
   $allow_remote_connections = true,
   $jvm_init_memory = '1024',
@@ -184,8 +188,8 @@ class neo4j (
   }
 
   service{'neo4j':
-    ensure  => running,
-    enable  => true,
+    ensure  => $service_ensure,
+    enable  => $service_enable,
     require => File['/etc/init.d/neo4j'],
   }
 
