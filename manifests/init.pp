@@ -38,12 +38,19 @@ class neo4j (
   $jvm_init_memory = '1024',
   $jvm_max_memory = '1024',
 
-  # low-level graph engine options
+  # file buffer cache options
   $nodestore_memory = undef,
   $relationshipstore_memory = undef,
   $propertystore_memory = undef,
   $propertystore_strings_memory = undef,
   $propertystore_arrays_memory = undef,
+
+  # object cache options
+  $cache_type = undef,
+  $node_cache_array_fraction = undef,
+  $relationship_cache_array_fraction = undef,
+  $node_cache_size = undef,
+  $relationship_cache_size = undef,
 
   #security
   $auth_ensure = absent,
