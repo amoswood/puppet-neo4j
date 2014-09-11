@@ -2,8 +2,8 @@
 # NOTE: This file is managed by Puppet
 #
 
-# Default values for the low-level graph engine
-<% if @nodestore_memory != nil -%>
+# file buffer cache options
+<% if @nodestore_memory -%>
 neostore.nodestore.db.mapped_memory=<%= @nodestore_memory %>
 <% end -%>
 <% if @relationshipstore_memory -%>
@@ -17,6 +17,23 @@ neostore.propertystore.db.strings.mapped_memory=<%= @propertystore_strings_memor
 <% end -%>
 <% if @propertystore_arrays_memory -%>
 neostore.propertystore.db.arrays.mapped_memory=<%= @propertystore_arrays_memory %>
+<% end -%>
+
+# object buffer cache options
+<% if @cache_type -%>
+cache_type=<%= @cache_type %>
+<% if @node_cache_array_fraction -%>
+node_cache_array_fraction=<%= @node_cache_array_fraction %>
+<% end -%>
+<% if @relationship_cache_array_fraction -%>
+relationship_cache_array_fraction=<%= @relationship_cache_array_fraction %>
+<% end -%>
+<% if @node_cache_size -%>
+node_cache_size=<%= @node_cache_size %>
+<% end -%>
+<% if @relationship_cache_size -%>
+relationship_cache_size=<%= @relationship_cache_size %>
+<% end -%>
 <% end -%>
 
 <% if @version >= "2.1.0" -%>
