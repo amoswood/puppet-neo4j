@@ -75,7 +75,7 @@ class neo4j (
 {
   #http://www.neo4j.com/customer/download/neo4j-enterprise-2.1.4-unix.tar.gz
   $package_name = "neo4j-${edition}-${version}"
-  $package_tarball = "${package_name}-unix.tar.gz"
+  $package_tarball = "${package_name}.tgz"
 
   if($::kernel != 'Linux') {
     fail('Only Linux is supported at this time.')
@@ -126,7 +126,7 @@ class neo4j (
 
   # get the tgz file
   exec { "wget ${package_tarball}" :
-    command => "wget \"http://www.neo4j.com/customer/download/${package_tarball}\" -O ${install_prefix}/${package_tarball}",
+    command => "wget \"http://www.neo4j.com/customer/download/${package_name}-unix.tar.gz\" -O ${install_prefix}/${package_tarball}",
     creates => "${install_prefix}/${package_tarball}",
     notify  => Exec["untar ${package_tarball}"],
     require => [Package['wget'], File[$install_prefix]],
