@@ -18,7 +18,8 @@ Added custom configuration of:
 1. Version 2.x.x or later
 1. Community or Enterprise editions
 1. JVM Wrapper Settings
-1. Low-Level Graph Engine Memory Settings (see Max DeMarzi's blog [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/))
+1. File Buffer Cache Options (see Max DeMarzi's blog [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/))
+1. Object Cache Options
 1. New Relic java agent path specified (see http://www.newrelic.com)
 1. Authentication Plugin installed and configured (see http://www.github.com)
 1. Authenticated User Management
@@ -84,17 +85,22 @@ class { 'neo4j' :
   jvm_max_memory  => '1024',
 }
 ```
-### Low-Level Graph Engine Memory Options
+### Cache Options
 
-The low-level graph engine memory options can be customized too to allow for better performance scaling.  For an explanation and usage
-of these options, see Max DeMarzi's Neo4j blog entry titled [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/).
+The cache options can be customized too to allow for better performance scaling.  For an explanation and usage
+of these options, see Neo4j documentation on [caching](http://docs.neo4j.org/chunked/stable/configuration-caches.html).
 ```puppet
 class { 'neo4j' :
-  nodestore_memory             => '25M',
-  relationshipstore_memory     => '50M',
-  propertystore_memory         => '100M',
-  propertystore_strings_memory => '130M',
-  propertystore_arrays_memory  => '130M',
+  nodestore_memory                  => '25M',
+  relationshipstore_memory          => '50M',
+  propertystore_memory              => '100M',
+  propertystore_strings_memory      => '130M',
+  propertystore_arrays_memory       => '130M',
+  cache_type                        => 'hpc',
+  node_cache_array_fraction         => '5',
+  relationship_cache_array_fraction => '5',
+  node_cache_size                   => '100M',
+  relationship_cache_size           => '100M',
 }
 ```
 ### Authentication and User Management
@@ -143,15 +149,27 @@ Manages the server.
 **Default:** *1024*
 - `jvm_max_memory`\* -- Maximum memory size of the jvm. Equates to java option "-Xmx=XXX". Specified in MBs.
 **Default:** *1024*
-- `nodestore_memory`\* -- Node store memory settings. Specified in MBs with a trailing "M" (i.e. "25M").
+
+######Custom Cache Attributes -- See Neo4j documentation on [caching](http://docs.neo4j.org/chunked/stable/configuration-caches.html)
+- `nodestore_memory`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
-- `relationshipstore_memory`\* -- Relationship store memory settings. Specified in MBs with a trailing "M" (i.e. "25M").
+- `relationshipstore_memory`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
-- `propertystore_memory`\* -- Property store memory settings. Specified in MBs with a trailing "M" (i.e. "25M").
+- `propertystore_memory`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
-- `propertystore_strings_memory`\* -- Property store array memory settings. Specified in MBs with a trailing "M" (i.e. "25M").
+- `propertystore_strings_memory`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
-- `propertystore_arrays_memory`\* -- Property store string memory settings. Specified in MBs with a trailing "M" (i.e. "25M").
+- `propertystore_arrays_memory`\* -- See Neo4j documentation.
+**Default:** *Neo4j default value*
+- `cache_type`\* -- See Neo4j documentation.
+**Default:** *Neo4j default value*
+- `node_cache_array_fraction`\* -- See Neo4j documentation.
+**Default:** *Neo4j default value*
+- `relationship_cache_array_fraction`\* -- See Neo4j documentation.
+**Default:** *Neo4j default value*
+- `node_cache_size`\* -- See Neo4j documentation.
+**Default:** *Neo4j default value*
+- `relationship_cache_size`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
 
 \* - see Max DeMarzi's Neo4j blog entry titled [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/)
