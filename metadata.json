@@ -1,0 +1,17 @@
+{
+  "name": "amosjwood-neo4j",
+  "version": "1.0.0",
+  "author": "Amos Wood",
+  "license": "Licensed under (Apache 2.0)",
+  "summary": "A module installing and configuring Neo4j community or enterprise editions.",
+  "source": "https://github.com/amoswood/puppet-neo4j",
+  "project_page": "(https://forge.puppetlabs.com/amosjwood/amosjwood-neo4j)",
+  "issues_url": "",
+  "tags": ["neo", "neo4j", "nosql", "graph", "database", "relationship"],
+  "operatingsystem_support": [
+    {
+    "operatingsystem": "Ubuntu",
+    "operatingsystemrelease": [ "12.04" ]
+    }
+   ]
+}

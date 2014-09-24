@@ -9,24 +9,24 @@
 
 ## Overview
 
-Installs Neo4J (http://www.neo4j.com) on RHEL/Ubuntu/Debian from their distribution tarballs downloaded directly from their site.
+Installs Neo4J (http://www.neo4j.com) on Ubuntu/Debian from their distribution tarballs downloaded directly from their site.
 
 ## Module Revisions
 ####1.0.0 - Initial Version
 
 Added custom configuration of:
-1. Version 2.x.x or later
-1. Community or Enterprise editions
-1. JVM Wrapper Settings
-1. File Buffer Cache Options (see Max DeMarzi's blog [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/))
-1. Object Cache Options
-1. New Relic java agent path specified (see http://www.newrelic.com)
-1. Authentication Plugin installed and configured (see http://www.github.com)
-1. Authenticated User Management
-  - Admin User
-  - Users and Passwords
-  - Read/Write or ReadOnly
-1. High Availability Options
+  1. Version 2.x.x or later
+  1. Community or Enterprise editions
+  1. JVM Wrapper Settings
+  1. File Buffer Cache Options (see Max DeMarzi's blog [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/))
+  1. Object Cache Options
+  1. New Relic java agent path specified (see http://www.newrelic.com)
+  1. Authentication Plugin installed and configured (see http://www.github.com)
+  1. Authenticated User Management
+    - Admin User
+    - Users and Passwords
+    - Read/Write or ReadOnly
+  1. High Availability Options
 
 ##Setup
 
@@ -214,12 +214,15 @@ These parameters configure the [Neo4j HA options](http://docs.neo4j.org/chunked/
 **Default:** *undef*
 - `ha_initial_hosts` -- Required. Other hosts in the cluster.
 **Default:** *undef*
+
   ```puppet
   $ha_initial_hosts = "${::ipaddress}:5001,other_ip:5001,another_ip:5001"
   ```
+
   ```puppet
   $ha_initial_hosts = "${::fqdn}:5001,host1.domain:5001,host2.domain:5001"
   ```
+  
 - `ha_cluster_port` -- Port to listen to cluster heartbeats and management communications.
 **Default:** *5001*
 - `ha_data_port` -- Port to send/receive cluster data on.
