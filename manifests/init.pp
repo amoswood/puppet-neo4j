@@ -90,12 +90,14 @@ class neo4j (
     }
   }
 
-  if($cache_memory_ratio && versioncmp($version, '2.1.5') < 0) {
-    warning("Ignoring the cache_memory_ratio value due to version being ${cache_memory_ratio}.")
-  }
-  if(!is_numeric($cache_memory_ratio) or $cache_memory_ratio < 0.0 or
-    $cache_memory_ratio > 100.0) {
-    fail("Invalid cache_memory_ratio value of ${cache_memory_ratio}. It must be in the range of 0.0 to 100.0.")
+  if($cache_memory_ratio) {
+    if(versioncmp($version, '2.1.5') < 0) {
+      warning("Ignoring the cache_memory_ratio value due to version being '${version}'.")
+    }
+    elsif(!is_numeric($cache_memory_ratio) or $cache_memory_ratio < 0.0 or
+      $cache_memory_ratio > 100.0) {
+        fail("Invalid cache_memory_ratio value of '${cache_memory_ratio}'. It must be in the range of 0.0 to 100.0.")
+    }
   }
 
   user { 'neo4j':
