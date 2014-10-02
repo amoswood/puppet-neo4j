@@ -22,6 +22,9 @@ neostore.propertystore.db.arrays.mapped_memory=<%= @propertystore_arrays_memory 
 # object buffer cache options
 <% if @cache_type -%>
 cache_type=<%= @cache_type %>
+<% if @cache_memory_ratio -%>
+cache_memory_ratio=<%= @cache_memory_ratio %>
+<% end -%>
 <% if @node_cache_array_fraction -%>
 node_cache_array_fraction=<%= @node_cache_array_fraction %>
 <% end -%>

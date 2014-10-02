@@ -47,6 +47,7 @@ class neo4j (
 
   # object cache options
   $cache_type = undef,
+  $cache_memory_ratio = undef,  # available starting in 2.1.5
   $node_cache_array_fraction = undef,
   $relationship_cache_array_fraction = undef,
   $node_cache_size = undef,
@@ -80,13 +81,21 @@ class neo4j (
   if($::kernel != 'Linux') {
     fail('Only Linux is supported at this time.')
   }
-  if($version < '2.0.0') {
+  if(versioncmp($version, '2.0.0') < 0) {
     fail('Only versions >= 2.0.0 are supported at this time.')
   }
   if($ha_ensure != absent) {
-    if(! is_numeric($ha_server_id)) {
+    if(!is_numeric($ha_server_id)) {
       fail('The Server Id value must be specified and must numeric.')
     }
+  }
+
+  if($cache_memory_ratio && versioncmp($version, '2.1.5') < 0) {
+    warning("Ignoring the cache_memory_ratio value due to version being ${cache_memory_ratio}.")
+  }
+  if(!is_numeric($cache_memory_ratio) or $cache_memory_ratio < 0.0 or
+    $cache_memory_ratio > 100.0) {
+    fail("Invalid cache_memory_ratio value of ${cache_memory_ratio}. It must be in the range of 0.0 to 100.0.")
   }
 
   user { 'neo4j':
@@ -203,9 +212,9 @@ class neo4j (
 
   if($auth_ensure != absent) {
     #determine the plugin version
-    if($version >= '2.1.0') {
+    if(versioncmp($version, '2.1.0') >= 0) {
       $authentication_plugin_name = 'authentication-extension-2.1.2-1.0-SNAPSHOT.jar'
-    } elsif($version >= '2.0.0') {
+    } elsif(versioncmp($version, '2.0.0') >= 0) {
       $authentication_plugin_name = 'authentication-extension-2.0.3-1.0-SNAPSHOT.jar'
     } else {
       fail("Authenitcation in version ${version} is not supported. It is only available in version >= 2.0.0.")
@@ -249,16 +258,5 @@ class neo4j (
     if(is_hash($auth_users)) {
       create_resources(neo4j::user, $auth_users)
     }
-  }
-
-  $newrelic_dir_ensure = $::neo4j::newrelic_ensure ? {
-    present => directory,
-    default => absent,
-  }
-
-  file { "${install_prefix}/newrelic" :
-    ensure => $newrelic_dir_ensure,
-    force  => true,
-    notify => Service['neo4j'],
   }
 }

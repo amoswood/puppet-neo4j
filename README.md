@@ -11,23 +11,6 @@
 
 Installs Neo4J (http://www.neo4j.com) on Ubuntu/Debian from their distribution tarballs downloaded directly from their site.
 
-## Module Revisions
-####1.0.0 - Initial Version
-
-Added custom configuration of:
-  1. Version 2.x.x or later
-  1. Community or Enterprise editions
-  1. JVM Wrapper Settings
-  1. File Buffer Cache Options (see Max DeMarzi's blog [Scaling-Up](http://maxdemarzi.com/2013/11/25/scaling-up/))
-  1. Object Cache Options
-  1. New Relic java agent path specified (see http://www.newrelic.com)
-  1. Authentication Plugin installed and configured (see http://www.github.com)
-  1. Authenticated User Management
-    - Admin User
-    - Users and Passwords
-    - Read/Write or ReadOnly
-  1. High Availability Options
-
 ##Setup
 
 All of the setup for any of the configuration is done through via class `neo4j`.  There are default options
@@ -97,6 +80,7 @@ class { 'neo4j' :
   propertystore_strings_memory      => '130M',
   propertystore_arrays_memory       => '130M',
   cache_type                        => 'hpc',
+  cache_memory_ratio                => '50.0',
   node_cache_array_fraction         => '5',
   relationship_cache_array_fraction => '5',
   node_cache_size                   => '100M',
@@ -163,6 +147,8 @@ Manages the server.
 **Default:** *Neo4j default value*
 - `cache_type`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
+- `cache_memory_ratio`\* -- See Neo4j documentation.
+**Default:** *Neo4j default value*
 - `node_cache_array_fraction`\* -- See Neo4j documentation.
 **Default:** *Neo4j default value*
 - `relationship_cache_array_fraction`\* -- See Neo4j documentation.
@@ -222,7 +208,7 @@ These parameters configure the [Neo4j HA options](http://docs.neo4j.org/chunked/
   ```puppet
   $ha_initial_hosts = "${::fqdn}:5001,host1.domain:5001,host2.domain:5001"
   ```
-  
+
 - `ha_cluster_port` -- Port to listen to cluster heartbeats and management communications.
 **Default:** *5001*
 - `ha_data_port` -- Port to send/receive cluster data on.
