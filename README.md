@@ -223,3 +223,7 @@ These parameters configure the [Neo4j HA options](http://docs.neo4j.org/chunked/
 **Default:** *Neo4j default*
 - `ha_slave_only` -- Server can only be a slave in the cluster.
 **Default:** *Neo4j default*
+
+######Logging Parameters
+- `keep_logical_logs` -- Specifies the [logical logs property](http://docs.neo4j.org/chunked/stable/configuration-logical-logs.html).
+**Default:** *'7 days'*

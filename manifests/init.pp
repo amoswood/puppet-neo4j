@@ -72,6 +72,9 @@ class neo4j (
   $ha_tx_push_strategy = undef,
   $ha_allow_init_cluster = true,
   $ha_slave_only = false,
+
+  #logging options
+  $keep_logical_logs = '7 days',
 )
 {
   #http://www.neo4j.com/customer/download/neo4j-enterprise-2.1.4-unix.tar.gz
