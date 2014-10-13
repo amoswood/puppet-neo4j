@@ -1,3 +1,10 @@
+##2014-10-13 - Supported Release 1.0.2
+### Summary
+Added logical log parameter to configuration
+
+#### Features
+- Added control parameter `keep_logical_logs`.
+
 ##2014-10-02 - Supported Release 1.0.1
 ### Summary
 Added changelog and feature for object cache new to version 2.1.5
