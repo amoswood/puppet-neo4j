@@ -72,6 +72,7 @@ class neo4j (
   $ha_tx_push_strategy = undef,
   $ha_allow_init_cluster = true,
   $ha_slave_only = false,
+  $ha_initial_hosts = undef,
 
   #logging options
   $keep_logical_logs = '7 days',
@@ -90,6 +91,9 @@ class neo4j (
   if($ha_ensure != absent) {
     if(!is_numeric($ha_server_id)) {
       fail('The Server Id value must be specified and must numeric.')
+    }
+    if($ha_initial_hosts == false) {
+      fail('When running as HA you need to declare your seed hosts using ha_initial_hosts.')
     }
   }
 
@@ -187,10 +191,12 @@ class neo4j (
     order   => 01,
   }
 
-  concat::fragment{ 'neo4j properties ha_initial_hosts':
-    target  => $properties_file,
-    content => 'ha.initial_hosts=',
-    order   => 02,
+  if ($ha_ensure != absent) {
+    concat::fragment{ 'neo4j properties ha_initial_hosts':
+      target  => $properties_file,
+      content => "ha.initial_hosts=${ha_initial_hosts}",
+      order   => 02,
+    }
   }
 
   concat::fragment{ 'neo4j properties footer':
