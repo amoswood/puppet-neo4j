@@ -177,6 +177,7 @@ class neo4j (
     owner   => 'neo4j',
     group   => 'neo4j',
     mode    => '0644',
+    require => Exec["untar ${package_tarball}"],
     before  => Service['neo4j'],
     notify  => Service['neo4j'],
   }
