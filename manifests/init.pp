@@ -174,11 +174,12 @@ class neo4j (
   $properties_file = "${install_prefix}/${package_name}/conf/neo4j.properties"
 
   concat{ $properties_file :
-    owner  => 'neo4j',
-    group  => 'neo4j',
-    mode   => '0644',
-    before => Service['neo4j'],
-    notify => Service['neo4j'],
+    owner   => 'neo4j',
+    group   => 'neo4j',
+    mode    => '0644',
+    require => Exec["untar ${package_tarball}"],
+    before  => Service['neo4j'],
+    notify  => Service['neo4j'],
   }
 
   concat::fragment{ 'neo4j properties header':
