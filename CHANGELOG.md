@@ -1,3 +1,14 @@
+##2014-06-27 - Release 1.1.0
+### Summary
+A bug fix version
+
+#### Features
+- Merged pull requests submitted by the user community (THANKS!!!) about dependency issues.
+
+##2014-10-13 - Supported Release 1.0.3
+### Summary
+Fixed project reference
+
 ##2014-10-13 - Supported Release 1.0.2
 ### Summary
 Added logical log parameter to configuration
