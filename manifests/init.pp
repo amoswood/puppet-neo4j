@@ -150,7 +150,7 @@ class neo4j (
   exec { "untar ${package_tarball}":
       command     => "tar -xzf ${install_prefix}/${package_tarball} -C ${install_prefix}/; chown neo4j:neo4j -R ${install_prefix}",
       refreshonly => true,
-      require     => [Exec ["wget ${package_tarball}"], File[$install_prefix], Package['tar']],
+      require     => [Exec["wget ${package_tarball}"], File[$install_prefix], Package['tar']],
   }
 
   #install the service
@@ -174,11 +174,11 @@ class neo4j (
   $properties_file = "${install_prefix}/${package_name}/conf/neo4j.properties"
 
   concat{ $properties_file :
-    owner   => 'neo4j',
-    group   => 'neo4j',
-    mode    => '0644',
-    before  => Service['neo4j'],
-    notify  => Service['neo4j'],
+    owner  => 'neo4j',
+    group  => 'neo4j',
+    mode   => '0644',
+    before => Service['neo4j'],
+    notify => Service['neo4j'],
   }
 
   concat::fragment{ 'neo4j properties header':
