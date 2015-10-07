@@ -1,0 +1,10 @@
+fixtures:
+  symlinks:
+    "neo4j": "#{source_dir}"
+  forge_modules:
+    stdlib:
+      repo: "puppetlabs-stdlib"
+      ref: "3.2.0"
+    concat:
+      repo: "puppetlabs-concat"
+      ref: "1.1.0"

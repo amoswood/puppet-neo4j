@@ -24,5 +24,4 @@ class { 'neo4j' :
   auth_admin_user          => 'admin',
   auth_admin_password      => 'password',
   auth_users               => $auth_users,
-  newrelic_ensure          => absent,
 }
