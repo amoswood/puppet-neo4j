@@ -127,6 +127,8 @@ Manages the server.
 **Default:** */opt/neo4j*
 - `allow_remote_connections` -- Whether to allow remote connections to Neo4j instead of only from localhost.
 **Default:** *true*
+- `address` -- Specify the address to listen at if `allow_remote_connections` is set to *true*.
+**Default:** *ipaddress* (from puppet facts)
 
 ######Custom Memory Attributes
 - `jvm_init_memory`\* -- Initial memory size of the jvm. Equates to java option "-Xms=XXX". Specified in MBs.
