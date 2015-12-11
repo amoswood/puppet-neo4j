@@ -129,6 +129,18 @@ Manages the server.
 **Default:** *true*
 - `address` -- Specify the address to listen at if `allow_remote_connections` is set to *true*.
 **Default:** *ipaddress* (from puppet facts)
+- `http_port` -- Specify the http port to listen on
+**Default:** *7474*
+- `https_enabled` -- Enable Neo4j to listen for encrypted (https) connections
+**Defaukt:** *true*
+- `https_port` -- Specify the https port to listen on
+**Default:** *7473*
+-- `ssl_cert` -- Specify the ssl public certificate used with encrypted connections
+**Default:** *conf/ssl/snakeoil.cert*
+-- `ssl_key` -- Specify the ssl private key used with encrypted connections
+**Default:** *conf/ssl/snakeoil.key*
+-- `ssl_keystore` -- Specify SSL keystore used with encrypted connections
+**Default:** *undef*
 
 ######Custom Memory Attributes
 - `jvm_init_memory`\* -- Initial memory size of the jvm. Equates to java option "-Xms=XXX". Specified in MBs.
