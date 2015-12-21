@@ -36,6 +36,12 @@ class neo4j (
   #server options
   $allow_remote_connections = true,
   $address = $::ipaddress,
+  $http_port = '7474',
+  $https_port = '7473',
+  $https_enabled = true,
+  $ssl_cert = 'conf/ssl/snakeoil.cert',
+  $ssl_key = 'conf/ssl/snakeoil.key',
+  $ssl_keystore = undef,
   $jvm_init_memory = '1024',
   $jvm_max_memory = '1024',
 

@@ -18,13 +18,16 @@ org.neo4j.server.webserver.address=<%= @address %>
 <% end -%>
 
 # http port (for all data, administrative, and UI access)
-org.neo4j.server.webserver.port=7474
-org.neo4j.server.webserver.https.enabled=true
-org.neo4j.server.webserver.https.port=7473
-org.neo4j.server.webserver.https.cert.location=conf/ssl/snakeoil.cert
-org.neo4j.server.webserver.https.key.location=conf/ssl/snakeoil.key
-
+org.neo4j.server.webserver.port=<%= @http_port %>
+org.neo4j.server.webserver.https.enabled=<%= @https_enabled %>
+org.neo4j.server.webserver.https.port=<%= @https_port %>
+org.neo4j.server.webserver.https.cert.location=<%= @ssl_cert %>
+org.neo4j.server.webserver.https.key.location=<%= @ssl_key %>
+<% if @ssl_keystore -%>
+org.neo4j.server.webserver.https.keystore.location=<%= @ssl_keystore %>
+<% else -%>
 org.neo4j.server.webserver.https.keystore.location=<%= @install_prefix -%>/data/keystore
+<% end -%>
 
 #*****************************************************************
 # Administration client configuration
