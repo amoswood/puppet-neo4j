@@ -1,3 +1,13 @@
+##2016-02-03 - Release 99.99.99
+### Summary
+Handing off support mlambrichs who graciously wanted to take ownership of it.
+
+Many thanks to mlambrichs since I just don't have the time for this anymore.
+
+The new forge module can be located at https://forge.puppetlabs.com/mlambrichs/neo4j.
+
+The new github project can be found at https://github.com/mlambrichs/puppet-neo4j.
+
 ##2014-06-27 - Release 1.1.0
 ### Summary
 A bug fix version
